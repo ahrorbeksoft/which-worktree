@@ -10,9 +10,14 @@ Vite plugin for worktree-based development in Svelte 5 apps. It does two things:
    directories — plus the detected workspace root — to the fs allow list.
 2. **Shows which checkout is running.** When you have several worktrees with
    dev servers on different ports, it's easy to lose track of which is which.
-   The plugin injects `globalThis.__WHICH_WORKTREE__` into served HTML, and the
-   `<WorktreeBadge />` component renders a small badge with the worktree name
-   and current branch.
+   The plugin adds a `GET /__which-worktree__` dev-server endpoint that returns
+   the checkout info as JSON, and the `<WorktreeBadge />` component fetches it
+   and renders a small badge with the worktree name and current branch.
+
+Using a server endpoint instead of HTML injection means it works everywhere —
+including SvelteKit, where Vite's `transformIndexHtml` never runs — and the
+info is computed per request, so the badge reflects branch switches without
+restarting the dev server.
 
 ## Install
 
@@ -48,14 +53,16 @@ Then mount the badge once, e.g. in your root layout:
 ```
 
 The badge renders only when `import.meta.env.DEV` is true, so it never appears
-in production builds.
+in production builds. It fetches `/__which-worktree__` from the same origin —
+with no plugin running the request simply fails and the badge stays hidden.
 
-### Options
+### Endpoint
 
-```ts
-whichWorktree({ badge: false }); // skip the HTML injection
-whichWorktree();                 // default: inject __WHICH_WORKTREE__
 ```
+GET /__which-worktree__ → {"name":"my-feature","branch":"feat/x","source":"/abs/path","kind":"worktree"}
+```
+
+`WorktreeInfo` is recomputed on each request.
 
 ### Badge props
 

@@ -103,21 +103,21 @@ function collect(path, roots) {
  *
  * - extends `server.fs.allow` with the real locations of symlinked
  *   `node_modules` entries so `/@fs/...` asset URLs stop 403ing
- * - injects `globalThis.__WHICH_WORKTREE__` into served HTML so
+ * - serves `WorktreeInfo` JSON at `GET /__which-worktree__` so
  *   `<WorktreeBadge />` can show which checkout is running
  *
- * @param {{ badge?: boolean }} [options] set `badge: false` to skip HTML injection
+ * Uses a dev-server middleware instead of `transformIndexHtml`, so it also
+ * works in SvelteKit where Vite's HTML transform never runs.
+ *
  * @returns {import('vite').Plugin}
  */
-export function whichWorktree(options = {}) {
-	const { badge = true } = options;
-	let info;
+export function whichWorktree() {
+	let root = process.cwd();
 	return {
 		name: 'which-worktree',
 		apply: 'serve',
 		config(config) {
-			const root = config.root ?? process.cwd();
-			info = worktreeInfo(root);
+			root = config.root ?? root;
 			return {
 				server: {
 					fs: {
@@ -126,19 +126,12 @@ export function whichWorktree(options = {}) {
 				}
 			};
 		},
-		transformIndexHtml: {
-			order: 'pre',
-			handler() {
-				if (!badge) return;
-				const json = JSON.stringify(info ?? {}).replace(/</g, '\\u003c');
-				return [
-					{
-						tag: 'script',
-						children: `globalThis.__WHICH_WORKTREE__=${json};`,
-						injectTo: 'head-prepend'
-					}
-				];
-			}
+		configureServer(server) {
+			server.middlewares.use('/__which-worktree__', (_req, res) => {
+				res.setHeader('content-type', 'application/json');
+				res.setHeader('cache-control', 'no-store');
+				res.end(JSON.stringify(worktreeInfo(root)));
+			});
 		}
 	};
 }

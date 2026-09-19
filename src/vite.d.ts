@@ -9,8 +9,8 @@ export function worktreeInfo(root?: string): WorktreeInfo;
 
 /**
  * Vite plugin for worktree-based development: extends `server.fs.allow` with
- * the real locations of symlinked `node_modules` entries and injects
- * `globalThis.__WHICH_WORKTREE__` into served HTML.
+ * the real locations of symlinked `node_modules` entries and serves
+ * `WorktreeInfo` JSON at `GET /__which-worktree__`.
  */
-export function whichWorktree(options?: { badge?: boolean }): Plugin;
+export function whichWorktree(): Plugin;
 export default whichWorktree;

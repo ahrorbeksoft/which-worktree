@@ -10,8 +10,11 @@
 
 	let info = $state<WorktreeInfo>();
 
-	onMount(() => {
-		info = (window as { __WHICH_WORKTREE__?: WorktreeInfo }).__WHICH_WORKTREE__;
+	onMount(async () => {
+		try {
+			const res = await fetch('/__which-worktree__');
+			if (res.ok) info = await res.json();
+		} catch {}
 	});
 
 	let shortName = $derived(info?.name.split('/').pop() ?? info?.name);
