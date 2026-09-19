@@ -1,0 +1,32 @@
+node_modules
+dist
+.DS_Store
+
+# package artifacts
+*.tgz
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+bun-debug.log*
+
+# caches
+.cache
+.vite
+.svelte-kit
+coverage
+*.tsbuildinfo
+
+# local environment files
+.env
+.env.*
+!.env.example
+!.env*.example
+
+# editor / OS files
+.zed/
+.vscode/
+.idea/
+.npmrc
