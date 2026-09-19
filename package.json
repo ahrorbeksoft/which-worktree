@@ -1,6 +1,6 @@
 {
 	"name": "which-worktree",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"description": "Vite plugin that fixes dev-server fs.allow for symlinked node_modules (git worktrees, cow pastures) and shows a badge with the current branch/worktree name.",
 	"type": "module",
 	"license": "ISC",
