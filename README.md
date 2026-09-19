@@ -49,11 +49,14 @@ both come from the plugin. Then pick the badge for your framework.
 
 ```svelte
 <script>
-  import { WorktreeBadge } from "which-worktree";
+  import { WorktreeBadge } from "which-worktree/svelte";
 </script>
 
 <WorktreeBadge />
 ```
+
+(`which-worktree` root still exports the Svelte badge for backwards
+compatibility.)
 
 ### React (Vite, React Router, …)
 

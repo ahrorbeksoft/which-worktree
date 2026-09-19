@@ -18,6 +18,11 @@
 			"types": "./src/vite.d.ts",
 			"default": "./src/vite.js"
 		},
+		"./svelte": {
+			"types": "./src/svelte.d.ts",
+			"svelte": "./src/svelte.js",
+			"default": "./src/svelte.js"
+		},
 		"./WorktreeBadge.svelte": {
 			"types": "./src/WorktreeBadge.svelte.d.ts",
 			"svelte": "./src/WorktreeBadge.svelte",
