@@ -1,6 +1,6 @@
 {
 	"name": "which-worktree",
-	"version": "0.1.1",
+	"version": "0.2.0",
 	"description": "Dev-server helpers for worktree-based development: Vite plugin that fixes fs.allow for symlinked node_modules, plus a worktree/branch badge for Svelte, React, Next.js and other frameworks.",
 	"type": "module",
 	"license": "ISC",
