@@ -8,3 +8,12 @@ export interface WorktreeInfo {
 	/** How the worktree was detected. */
 	kind: 'cow' | 'worktree' | 'repo' | 'dir';
 }
+
+export type BadgePosition = 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
+
+export interface WorktreeBadgeProps {
+	/** Corner to pin the badge to. Defaults to `"bottom-right"`. */
+	position?: BadgePosition;
+	/** URL the badge fetches `WorktreeInfo` from. Defaults to `"/__which-worktree__"`. */
+	endpoint?: string;
+}

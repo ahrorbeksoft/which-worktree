@@ -25,9 +25,10 @@ restarting the dev server.
 npm install -D which-worktree
 ```
 
-`svelte` (^5) and `vite` (>=5) are peer dependencies.
+`svelte` (^5), `react` (>=16.8) and `vite` (>=5) are peer dependencies — all
+optional, install only what your framework uses.
 
-## Usage
+## Usage — Vite (React, Vue, Solid, SvelteKit, Astro, …)
 
 Add the plugin in `vite.config.js` / `vite.config.ts`:
 
@@ -40,9 +41,11 @@ export default defineConfig({
 });
 ```
 
-The plugin only applies to `vite serve` — builds are untouched.
+The plugin only applies to `vite serve` — builds are untouched. This is all a
+Vite app needs: the fs.allow fix and the `GET /__which-worktree__` endpoint
+both come from the plugin. Then pick the badge for your framework.
 
-Then mount the badge once, e.g. in your root layout:
+### Svelte / SvelteKit
 
 ```svelte
 <script>
@@ -52,9 +55,70 @@ Then mount the badge once, e.g. in your root layout:
 <WorktreeBadge />
 ```
 
-The badge renders only when `import.meta.env.DEV` is true, so it never appears
-in production builds. It fetches `/__which-worktree__` from the same origin —
-with no plugin running the request simply fails and the badge stays hidden.
+### React (Vite, React Router, …)
+
+```tsx
+import { WorktreeBadge } from "which-worktree/react";
+
+export default function Root() {
+  return (
+    <>
+      <Outlet />
+      <WorktreeBadge />
+    </>
+  );
+}
+```
+
+### Any other framework (Vue, Solid, Astro, plain JS)
+
+```ts
+import { attachWorktreeBadge } from "which-worktree/badge";
+
+attachWorktreeBadge(); // call once in your client entry
+```
+
+All badges render only in development and fetch `/__which-worktree__` from the
+same origin — with no plugin running the request simply fails and nothing
+shows.
+
+## Usage — Next.js
+
+Next.js doesn't use Vite, so there's no `fs.allow` fix to apply — symlinked
+`node_modules` already resolve through webpack/Turbopack. To get the badge,
+expose the endpoint with a route handler:
+
+```ts
+// app/__which-worktree__/route.ts
+export { GET, dynamic } from "which-worktree/next";
+```
+
+Pages Router instead:
+
+```ts
+// pages/api/__which-worktree__.ts
+export { apiHandler as default } from "which-worktree/next";
+```
+
+Then mount the React badge in your root layout:
+
+```tsx
+// app/layout.tsx
+import { WorktreeBadge } from "which-worktree/react";
+
+export default function RootLayout({ children }) {
+  return (
+    <html>
+      <body>
+        {children}
+        <WorktreeBadge />
+        {/* Pages Router lives at /api/... — pass the endpoint: */}
+        {/* <WorktreeBadge endpoint="/api/__which-worktree__" /> */}
+      </body>
+    </html>
+  );
+}
+```
 
 ### Endpoint
 
@@ -67,21 +131,28 @@ GET /__which-worktree__ → {"name":"my-feature","branch":"feat/x","source":"/ab
 ### Badge props
 
 ```svelte
-<WorktreeBadge position="top-left" />
+<WorktreeBadge position="top-left" endpoint="/api/__which-worktree__" />
 ```
 
-`position` is one of `"top-left" | "top-right" | "bottom-left" | "bottom-right"`
-(default `"bottom-right"`). Hovering the badge shows a tooltip with the full
-worktree name, branch, and source checkout path.
+- `position` — `"top-left" | "top-right" | "bottom-left" | "bottom-right"`
+  (default `"bottom-right"`)
+- `endpoint` — where to fetch `WorktreeInfo` (default `"/__which-worktree__"`)
+
+Hovering the badge shows a tooltip with the full worktree name, branch, and
+source checkout path.
 
 ## `worktreeInfo(root?)`
 
-Also exported from `which-worktree/vite` for programmatic use. Detects the
+Exported from `which-worktree/info` (also re-exported by `which-worktree/vite`
+and `which-worktree/next`) for programmatic use. It's pure Node with no Vite
+dependency, so custom dev servers (Express, Fastify, webpack `devServer`
+middleware, Angular CLI proxies) can serve `WorktreeInfo` however they like —
+the Vite plugin and Next.js handlers are both built on it. Detects the
 checkout kind at `root` (defaults to `process.cwd()`) and never throws — it
 falls back to the directory name:
 
 ```ts
-import { worktreeInfo } from "which-worktree/vite";
+import { worktreeInfo } from "which-worktree/info";
 
 worktreeInfo(); // { name, branch?, source?, kind }
 ```

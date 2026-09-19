@@ -1,7 +1,7 @@
 {
 	"name": "which-worktree",
 	"version": "0.1.1",
-	"description": "Vite plugin that fixes dev-server fs.allow for symlinked node_modules (git worktrees, cow pastures) and shows a badge with the current branch/worktree name.",
+	"description": "Dev-server helpers for worktree-based development: Vite plugin that fixes fs.allow for symlinked node_modules, plus a worktree/branch badge for Svelte, React, Next.js and other frameworks.",
 	"type": "module",
 	"license": "ISC",
 	"publishConfig": {
@@ -22,6 +22,22 @@
 			"types": "./src/WorktreeBadge.svelte.d.ts",
 			"svelte": "./src/WorktreeBadge.svelte",
 			"default": "./src/WorktreeBadge.svelte"
+		},
+		"./react": {
+			"types": "./src/react.d.ts",
+			"default": "./src/react.jsx"
+		},
+		"./next": {
+			"types": "./src/next.d.ts",
+			"default": "./src/next.js"
+		},
+		"./badge": {
+			"types": "./src/badge.d.ts",
+			"default": "./src/badge.js"
+		},
+		"./info": {
+			"types": "./src/info.d.ts",
+			"default": "./src/info.js"
 		},
 		"./package.json": "./package.json"
 	},
@@ -44,13 +60,27 @@
 		"vite-plugin",
 		"svelte",
 		"svelte5",
+		"react",
+		"nextjs",
 		"git-worktree",
 		"worktree",
 		"dev-server"
 	],
 	"peerDependencies": {
+		"react": ">=16.8.0",
 		"svelte": "^5.0.0",
 		"vite": ">=5.0.0"
+	},
+	"peerDependenciesMeta": {
+		"react": {
+			"optional": true
+		},
+		"svelte": {
+			"optional": true
+		},
+		"vite": {
+			"optional": true
+		}
 	},
 	"devDependencies": {
 		"vite": "^8.3.0"

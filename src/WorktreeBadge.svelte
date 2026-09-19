@@ -1,18 +1,17 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import type { WorktreeInfo } from './types.js';
+	import type { WorktreeBadgeProps, WorktreeInfo } from './types.js';
 
-	type Props = {
-		position?: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
-	};
-
-	let { position = 'bottom-right' }: Props = $props();
+	let {
+		position = 'bottom-right',
+		endpoint = '/__which-worktree__'
+	}: WorktreeBadgeProps = $props();
 
 	let info = $state<WorktreeInfo>();
 
 	onMount(async () => {
 		try {
-			const res = await fetch('/__which-worktree__');
+			const res = await fetch(endpoint);
 			if (res.ok) info = await res.json();
 		} catch {}
 	});
